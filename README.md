@@ -6,7 +6,7 @@ This repo contains a showcase of how to use ssh certificates (for hosts & users)
 * How to configure `sshd` to present a host cert for host authentication on the client side.
 * How to configure a user's `ssh` to accept host certs sigend by a CA key.
 
-If you haven't already you should [read our blog](https://smallstep.com/blog) why ssh certificates let you achieve de facto SSH Single Sign-on while doing away with pesky public key management across your server fleet.
+If you haven't already you should [read our blog post](https://smallstep.com/blog/use-ssh-certificates/) on why ssh certificates let you achieve de facto SSH Single Sign-on while doing away with pesky public key management across your server fleet.
 
 The code in this repo comes with a pre-generated PKI. You will need `step` v0.12.0+ installed. It will use the popular tool [Vagrant](https://www.vagrantup.com/docs/installation/) to provision a ssh certificate enabled VM.
 
@@ -119,3 +119,69 @@ testuser@testhost:~$
 ```
 
 Boom! As you can see the `testhost` VM will welcome you with a matching `testuser@testhost` prompt.
+
+Learn how to use OAuth OIDC proviers like Gsuite or Instance Identity Documents to bootstrap ssh host & user certs in your blog post [If you’re not using SSH certificates you’re doing SSH wrong](https://smallstep.com/blog/use-ssh-certificates/) or check out the `step` CLI reference at [https://smallstep.com/docs/cli/ssh/](https://smallstep.com/docs/cli/ssh/).
+
+### Generate ssh host certificates
+
+This example repo includes a pre-generated ssh host cert & key. To replace it or generate SSH certs for other hosts running following command:
+
+```
+$ step ssh certificate --host --principal testhost \
+  --principal testhost.internal \
+  testhost ssh_host_ecdsa_key
+```
+
+Where `--principal` identifies the hostnames (ideally FQDNs) for the machine. For a single principal you can short cut the command to:
+
+```
+$ step ssh certificate --host testhost ssh_host_ecdsa_key
+```
+
+## Generate your own PKI for `step-ca` 
+
+We recommend to use your own PKI for usage outside of this example. You can initialize your [`step-ca`](https://github.com/smallstep/certificates) with both x509 and ssh certs with following command:
+
+```
+$ export STEPPATH=/tmp/mystep
+$ step ca init --ssh
+✔ What would you like to name your new PKI? (e.g. Smallstep): Smallstep
+✔ What DNS names or IP addresses would you like to add to your new CA? (e.g. ca.smallstep.com[,1.1.1.1,etc.]): localhost
+✔ What address will your new CA listen at? (e.g. :443): :443
+✔ What would you like to name the first provisioner for your new CA? (e.g. you@smallstep.com): admin
+✔ What do you want your password to be? [leave empty and we'll generate one]:
+
+Generating root certificate...
+all done!
+
+Generating intermediate certificate...
+
+Generating user and host SSH certificate signing keys...
+all done!
+
+✔ Root certificate: /tmp/mystep/certs/root_ca.crt
+✔ Root private key: /tmp/mystep/secrets/root_ca_key
+✔ Root fingerprint: d601c93a6256080e42cf02087fdc737f1429226ada6c040bac6494332e01527e
+✔ Intermediate certificate: /tmp/mystep/certs/intermediate_ca.crt
+✔ Intermediate private key: /tmp/mystep/secrets/intermediate_ca_key
+✔ SSH user root certificate: /tmp/mystep/certs/ssh_user_key.pub
+✔ SSH user root private key: /tmp/mystep/secrets/ssh_user_key
+✔ SSH host root certificate: /tmp/mystep/certs/ssh_host_key.pub
+✔ SSH host root private key: /tmp/mystep/secrets/ssh_host_key
+✔ Default configuration: /tmp/mystep/config/defaults.json
+✔ Certificate Authority configuration: /tmp/mystep/config/ca.json
+
+Your PKI is ready to go. To generate certificates for individual services see 'step help ca'.
+```
+
+Now you can launch your instance of [`step-ca`](https://github.com/smallstep/certificates) with your own PKI like so:
+
+```
+$ step-ca $(step path)/config/ca.json
+Please enter the password to decrypt /tmp/mystep/secrets/intermediate_ca_key:
+Please enter the password to decrypt /tmp/mystep/secrets/ssh_host_key:
+Please enter the password to decrypt /tmp/mystep/secrets/ssh_user_key:
+2019/09/11 23:34:13 Serving HTTPS on :443 ...
+```
+
+Please note that after you rengerate `ssh_host_key.pub` and `ssh_user_key.pub` you will have to reconfigure `ssh` and `sshd` for user and on hosts to accept the new CA keys.
