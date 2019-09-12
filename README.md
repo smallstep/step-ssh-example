@@ -3,8 +3,8 @@ This repo contains a showcase of how to use ssh certificates (for hosts & users)
 
 * How to provision [`step-ca`](https://github.com/smallstep/certificates) to issue SSH host & user certificates.
 * How to configure `sshd` to accept user certs for client authentication using a CA key.
-* How to configure `sshd` to present a host cert for host authentication on the client side.
-* How to configure a user's `ssh` to accept host certs sigend by a CA key.
+* How to configure `sshd` to present a host cert for host authentication on the client-side.
+* How to configure a user's `ssh` to accept host certs signed by a CA key.
 
 If you haven't already you should [read our blog post](https://smallstep.com/blog/use-ssh-certificates/) on why ssh certificates let you achieve de facto SSH Single Sign-on while doing away with pesky public key management across your server fleet.
 
@@ -55,7 +55,7 @@ $ echo "@cert-authority * ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAA
 
 You can also find the SSH CA key for host stored at `step/certs/ssh_host_key.pub` in this repo.
 
-Certificates bind names to public keys. In the case of this SSH host cert it's issued for `testhost` which is why we have to add following entry to your local `/etc/hosts` file:
+Certificates bind names to public keys. In the case of this SSH host cert it's issued for `testhost` which is why we have to add the following entry to your local `/etc/hosts` file:
 
 ```
 $ tail -n 1 /etc/hosts
@@ -103,7 +103,7 @@ Please enter the password to encrypt the private key: your-own-password
 ✔ SSH Agent: yes
 ```
 
-Conveniently `step` CLI add your SSH user cert to your local `ssh agent`. Now you will be able login up until four hours later (default) when the cert expires.
+Conveniently `step` CLI add your SSH user cert to your local `ssh agent`. Now you will be able to login up until four hours later (default) when the cert expires.
 
 ```
 $ ssh-add -l
@@ -140,7 +140,7 @@ $ step ssh certificate --host testhost ssh_host_ecdsa_key
 
 ## Generate your own PKI for `step-ca` 
 
-We recommend to use your own PKI for usage outside of this example. You can initialize your [`step-ca`](https://github.com/smallstep/certificates) with both x509 and ssh certs with following command:
+We recommend using your own PKI for usage outside of this example. You can initialize your [`step-ca`](https://github.com/smallstep/certificates) with both x509 and ssh certs with the following command:
 
 ```
 $ export STEPPATH=/tmp/mystep
@@ -184,4 +184,4 @@ Please enter the password to decrypt /tmp/mystep/secrets/ssh_user_key:
 2019/09/11 23:34:13 Serving HTTPS on :443 ...
 ```
 
-Please note that after you rengerate `ssh_host_key.pub` and `ssh_user_key.pub` you will have to reconfigure `ssh` and `sshd` for user and on hosts to accept the new CA keys.
+Please note that after you regenerate `ssh_host_key.pub` and `ssh_user_key.pub` you will have to reconfigure `ssh` and `sshd` for user and on hosts to accept the new CA keys.
