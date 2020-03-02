@@ -250,5 +250,5 @@ Please enter the password to decrypt /tmp/mystep/secrets/ssh_user_key:
 
 Please note that after you regenerate `ssh_host_key.pub` and `ssh_user_key.pub`
 you will have to reconfigure `ssh` and `sshd` for clients and hosts to accept
-the new CA keys. Checout [this simplified example](./simple-example.sh) for
+the new CA keys. Check out [this host bootstrapping script](./host-bootstrap.sh) for
 configuration examples.
