@@ -15,7 +15,7 @@ facto SSH Single Sign-on while doing away with pesky public key management
 across your server fleet.
 
 The code in this repo comes with a pre-generated PKI. You will need `step`
-v0.12.0+ installed ([installation docs](https://github.com/smallstep/cli#installation-guide)).
+v0.13.3+ installed ([installation docs](https://github.com/smallstep/cli#installation-guide)).
 The following examples will use the popular tool
 [Vagrant](https://www.vagrantup.com/docs/installation/) to provision a ssh
 certificate enabled VM.
@@ -123,7 +123,7 @@ In another terminal window run:
 
 <pre><code>
 <b>me@local:~$ export STEPPATH=`pwd`/step</b>
-<b>me@local:~$ step ssh certificate testuser testuser_ecdsa</b>
+<b>me@local:~$ step ssh certificate testuser testuser_ecdsa --ca-url https://localhost --root step/certs/root_ca.crt</b>
 ✔ Provisioner: admin (JWK) [kid: ux6AhkfzgclpI65xJeGHzNqHCmdCl0-nWO8YqF1mcn0]
 ✔ Please enter the password to decrypt the provisioner key: password
 ✔ CA: https://localhost
